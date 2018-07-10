@@ -35,3 +35,31 @@ func IDDuplicationCheck(c echo.Context) error {
 
 }
 
+func Signup(c echo.Context) error {
+	type binder struct {
+		ID   string `json:"id"`
+		Pw   string `json:"pw"`
+		Name string `json:"name"`
+	}
+
+	payload := &binder{}
+
+	if err := c.Bind(payload); err != nil {
+		return err
+	}
+
+	if isIDDuplicated, err := checkIDIsDuplicated(payload.ID); err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	} else if isIDDuplicated {
+		return c.NoContent(http.StatusConflict)
+	} else {
+		model.UserCol.Insert(model.User{
+			ID:   payload.ID,
+			Pw:   payload.Pw,
+			Name: payload.Name,
+		})
+
+		return c.NoContent(http.StatusOK)
+	}
+}
+
