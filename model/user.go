@@ -8,14 +8,9 @@ type User struct {
 	Name string
 }
 
-type Key struct {
-	Owner     User
-	UserAgent string
-}
-
 type Token struct {
-	Key      Key
 	Identity string `bson:"_id"`
+	Owner    User
 }
 
 var (
