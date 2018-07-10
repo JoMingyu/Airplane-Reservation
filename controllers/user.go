@@ -63,3 +63,25 @@ func Signup(c echo.Context) error {
 	}
 }
 
+func Login(c echo.Context) error {
+	type binder struct {
+		ID string `json:"id"`
+		Pw string `json:"pw"`
+	}
+
+	payload := &binder{}
+
+	if err := c.Bind(payload); err != nil {
+		return err
+	}
+
+	user := &model.User{}
+	if err := model.UserCol.Find(bson.M{"_id": payload.ID, "pw": payload.Pw}).One(user); err != nil {
+		return c.NoContent(http.StatusUnauthorized)
+	} else {
+		return c.JSON(http.StatusOK, map[string]string{
+			"accessToken":  util.GenerateAccessToken(user),
+			"refreshToken": util.GenerateRefreshToken(user),
+		})
+	}
+}

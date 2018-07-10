@@ -37,7 +37,7 @@ func GenerateAccessToken(owner *model.User) string {
 	return generateToken(owner, model.AccessTokenCol, time.Hour*24)
 }
 
-func GenerateRefreshToken(owner *model.User, userAgent string) string {
+func GenerateRefreshToken(owner *model.User) string {
 	return generateToken(owner, model.RefreshTokenCol, time.Hour*24*30)
 }
 
